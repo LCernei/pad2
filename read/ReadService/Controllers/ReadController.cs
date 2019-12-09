@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Cassandra;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ReadService.Models;
 
-namespace readService.Controllers
+namespace ReadService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -33,20 +34,8 @@ namespace readService.Controllers
             {
                 var name = row.GetValue<string>("name");
                 Console.WriteLine(name);
-                movieList.Add(new Movie{name = name});
+                movieList.Add(new Movie{Name = name});
             }
-            
-//            var accept = (string)Request.Headers["Accept"];
-//            Console.WriteLine(accept);
-
-//            var resultString = string.Empty;
-//            if (accept.Contains("json"))
-//            {
-//                
-//                resultString = JsonConvert.SerializeObject(movieList);
-//                Console.WriteLine($"in if {resultString}");
-//            }
-
             return Ok(movieList);
         }
     }

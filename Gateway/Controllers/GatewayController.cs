@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -20,83 +19,79 @@ namespace Gateway.Controllers
     public class GatewayController : ControllerBase
     {
         private readonly ILogger<GatewayController> _logger;
-
-        public GatewayController(ILogger<GatewayController> logger)
+        private readonly IHttpClientFactory _clientFactory;
+        public GatewayController(ILogger<GatewayController> logger, IHttpClientFactory clientFactory)
         {
             _logger = logger;
+            _clientFactory = clientFactory;
         }
 
         [HttpGet]
         [Route("[action]")]
-        public IActionResult Get()
+        public async Task<IActionResult> GetAll()
         {
-            using (var client = new HttpClient())
+            var accept = Request.Headers["Accept"].ToString();
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                "http://localhost:3000/read");
+            request.Headers.Add("Accept", accept);
+
+            var client = _clientFactory.CreateClient();
+            var response = await client.SendAsync(request);
+            
+            if (!response.IsSuccessStatusCode)
+                return StatusCode((int) response.StatusCode); // return fail
+            
+            await using var responseStream = await response.Content.ReadAsStreamAsync();
+
+            List<Movie> movies;
+            if (accept.Contains("xml"))
             {
-                client.BaseAddress = new Uri(" http://localhost:3000/");
-                var accept = Request.Headers["Accept"];
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
-                var responseTask = client.GetAsync("read");
-                responseTask.Wait();
-                
-                var result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-
-                    var readTask = result.Content.ReadAsStringAsync();
-                    readTask.Wait();
-                    
-                    var str = readTask.Result;
-                    object obj = new List<Movie>();
-                    
-                    if (((string) accept).Contains("xml"))
-                    {
-                        var serializer = new XmlSerializer(typeof(List<Movie>));
-                        using (TextReader reader = new StringReader(str))
-                        {
-                            obj = serializer.Deserialize(reader);
-                        }
-                    }
-                    else
-                    {
-                        obj = JsonSerializer.Deserialize<List<Movie>>(str);
-                        
-                    }
-                    
-                    return Ok(obj);
-                }
+                var serializer = new XmlSerializer(typeof(List<Movie>));
+                movies = (List<Movie>)serializer.Deserialize(responseStream);
             }
-
-            return Ok("aaa");
+            else
+            {
+                movies = await JsonSerializer.DeserializeAsync
+                    <List<Movie>>(responseStream);
+            }
+            return Ok(movies);
         }
         
         [HttpPost]
         [Route("[action]")]
-        public IActionResult Post([FromBody] Movie parameters)
+        public async Task<IActionResult> Post([FromBody] Movie parameters)
         {
-            Console.WriteLine(parameters.name);
-            using (var client = new HttpClient())
+            var accept = Request.Headers["Accept"].ToString();
+            var contentType = Request.Headers["Content-Type"].ToString();
+            
+            var request = new HttpRequestMessage(HttpMethod.Post,
+                "http://localhost:4000/write");
+            request.Content = new StringContent(JsonSerializer.Serialize(parameters),
+                Encoding.UTF8, 
+                "application/json");
+            request.Headers.Add("Accept", accept);
+
+            var client = _clientFactory.CreateClient();
+
+            var response = await client.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+                return StatusCode((int) response.StatusCode); // return fail
+            
+            await using var responseStream = await response.Content.ReadAsStreamAsync();
+
+            string content;
+            if (accept.Contains("xml"))
             {
-                client.BaseAddress = new Uri(" http://localhost:4000/");
-                var accept = Request.Headers["Accept"];
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
-                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, "write");
-                requestMessage.Content = new StringContent(JsonSerializer.Serialize(parameters),
-                    Encoding.UTF8, 
-                    "application/json");//CONTENT-TYPE header
-
-                var responseTask = client.SendAsync(requestMessage);
-
-                responseTask.Wait();
-                
-                var result = responseTask.Result;
-
-                var readTask = result.Content.ReadAsStringAsync();
-                readTask.Wait();
-                    
-                var str = readTask.Result;
-//                return Ok($"{str}@\n{result.RequestMessage}@\n{result.StatusCode}@\n{requestMessage.Content.Headers.ContentType}");
-                return Ok(str);
+                var serializer = new XmlSerializer(typeof(string));
+                content = (string)serializer.Deserialize(responseStream);
             }
+            else
+            {
+                content = await JsonSerializer.DeserializeAsync
+                    <string>(responseStream);
+            }
+            return Ok(content);
         }
     }
 }

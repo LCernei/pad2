@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "readService", "readService\readService.csproj", "{B132BF5C-22CC-4B62-B349-09654EDD3B6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadService", "ReadService\ReadService.csproj", "{B132BF5C-22CC-4B62-B349-09654EDD3B6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

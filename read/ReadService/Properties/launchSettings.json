@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "readService": {
+    "ReadService": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "read",
