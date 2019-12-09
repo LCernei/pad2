@@ -33,7 +33,9 @@ namespace Gateway.Controllers
         public async Task<IActionResult> GetAll()
         {
             var accept = Request.Headers["Accept"].ToString();
-            
+            var movies = await GetCache(accept);
+            if (movies == null)
+                return Ok(movies);
             var currentIp = readIpList[currentIndex];
             currentIndex++;
             if (currentIndex >= readIpList.Count)
@@ -55,7 +57,7 @@ namespace Gateway.Controllers
             
             await using var responseStream = await response.Content.ReadAsStreamAsync();
 
-            List<Movie> movies;
+            
             if (accept.Contains("xml"))
             {
                 var serializer = new XmlSerializer(typeof(List<Movie>));
@@ -66,6 +68,8 @@ namespace Gateway.Controllers
                 movies = await JsonSerializer.DeserializeAsync
                     <List<Movie>>(responseStream);
             }
+
+            SetCache(movies);
             return Ok(movies);
         }
         
@@ -104,6 +108,53 @@ namespace Gateway.Controllers
                     <string>(responseStream);
             }
             return Ok(content);
+        }
+
+        private async Task<List<Movie>> GetCache(string accept)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                $"http://localhost:7000/cache/get");
+            request.Headers.Add("Accept", accept);
+            var client = _clientFactory.CreateClient();
+            var response = await client.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+            
+            await using var responseStream = await response.Content.ReadAsStreamAsync();
+
+            List<Movie> movies;
+            if (accept.Contains("xml"))
+            {
+                var serializer = new XmlSerializer(typeof(List<Movie>));
+                movies = (List<Movie>)serializer.Deserialize(responseStream);
+            }
+            else
+            {
+                movies = await JsonSerializer.DeserializeAsync
+                    <List<Movie>>(responseStream);
+            }
+
+            return movies;
+        }
+
+        private async void SetCache(List<Movie> movies)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post,
+                "http://localhost:7000/cache/post");
+            request.Content = new StringContent(JsonSerializer.Serialize(movies),
+                Encoding.UTF8, 
+                "application/json");
+            var client = _clientFactory.CreateClient();
+
+            var response = await client.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+                Console.WriteLine("FAIL post cache");
+
+            var str = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("SUCCESS post cache " + str);
+
         }
     }
 }

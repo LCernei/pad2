@@ -64,6 +64,18 @@ services:
         ipv4_address: 172.27.0.6
     depends_on:
       - "cassandra-seed"
+    
+  cache:
+    build:
+      context: ./cache/Cache
+    image: cache-image
+    ports:
+      - "7000:80"
+    networks:
+      default:
+        ipv4_address: 172.27.0.7
+    depends_on:
+      - "cassandra-seed"
 
 volumes:
   cassandra_data_seed:

@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.Rider2019.2/system/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.Rider2019.2/system/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_cache.-940397241.00" t="ExcludeRecursive" />
-    <e p="$PROJECT_DIR$" t="IncludeFlat">
-      <e p="Cache" t="IncludeRecursive">
+    <e p="C:\Users\lcernei\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\lcernei\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_cache.226894938.00" t="ExcludeRecursive" />
+    <e p="C:\Users\lcernei\source\repos\pad2\cache" t="IncludeFlat">
+      <e p="cache" t="IncludeRecursive">
+        <e p="appsettings.Development.json" t="Include" />
+        <e p="appsettings.json" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Cache.csproj" t="IncludeRecursive" />
         <e p="Controllers" t="Include">
           <e p="CacheController.cs" t="Include" />
         </e>
+        <e p="Dockerfile" t="Include" />
         <e p="Models" t="Include">
+          <e p="CacheItem.cs" t="Include" />
           <e p="Movie.cs" t="Include" />
         </e>
-        <e p="Program.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="launchSettings.json" t="Include" />
-        </e>
-        <e p="Startup.cs" t="Include" />
-        <e p="appsettings.Development.json" t="Include" />
-        <e p="appsettings.json" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
@@ -27,6 +24,11 @@
             </e>
           </e>
         </e>
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+        </e>
+        <e p="Startup.cs" t="Include" />
       </e>
       <e p="cache.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />

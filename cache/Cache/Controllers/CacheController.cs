@@ -18,6 +18,7 @@ namespace Cache.Controllers
     {
         private readonly ILogger<CacheController> _logger;
         private readonly IHttpClientFactory _clientFactory;
+        private static CacheItem _cache = new CacheItem();
         
         public CacheController(ILogger<CacheController> logger, IHttpClientFactory clientFactory)
         {
@@ -27,71 +28,28 @@ namespace Cache.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> GetAll()
+        public IActionResult Get()
         {
-            var accept = Request.Headers["Accept"].ToString();
+            Console.WriteLine(_cache.Timestamp.Ticks);
+            Console.WriteLine(_cache.Response == null);
             
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                $"http://{currentIp}/read");
-            request.Headers.Add("Accept", accept);
-
-            var client = _clientFactory.CreateClient();
-            var response = await client.SendAsync(request);
-            
-            if (!response.IsSuccessStatusCode)
-                return StatusCode((int) response.StatusCode); // return fail
-            
-            await using var responseStream = await response.Content.ReadAsStreamAsync();
-
-            List<Movie> movies;
-            if (accept.Contains("xml"))
+            if (_cache.Timestamp.AddMinutes(1) <= DateTime.Now)
             {
-                var serializer = new XmlSerializer(typeof(List<Movie>));
-                movies = (List<Movie>)serializer.Deserialize(responseStream);
+                Console.WriteLine("if");
+                return Ok(_cache.Response);
             }
-            else
-            {
-                movies = await JsonSerializer.DeserializeAsync
-                    <List<Movie>>(responseStream);
-            }
-            return Ok(movies);
+
+            _cache = new CacheItem();
+            return Ok();
         }
         
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> Post([FromBody] Movie parameters)
+        public IActionResult Post([FromBody] List<Movie> parameter)
         {
-            var accept = Request.Headers["Accept"].ToString();
-            var contentType = Request.Headers["Content-Type"].ToString();
-            
-            var request = new HttpRequestMessage(HttpMethod.Post,
-                "http://localhost:4000/write");
-            request.Content = new StringContent(JsonSerializer.Serialize(parameters),
-                Encoding.UTF8, 
-                "application/json");
-            request.Headers.Add("Accept", accept);
-
-            var client = _clientFactory.CreateClient();
-
-            var response = await client.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-                return StatusCode((int) response.StatusCode); // return fail
-            
-            await using var responseStream = await response.Content.ReadAsStreamAsync();
-
-            string content;
-            if (accept.Contains("xml"))
-            {
-                var serializer = new XmlSerializer(typeof(string));
-                content = (string)serializer.Deserialize(responseStream);
-            }
-            else
-            {
-                content = await JsonSerializer.DeserializeAsync
-                    <string>(responseStream);
-            }
-            return Ok(content);
+            _cache.Response = parameter;
+            _cache.Timestamp = DateTime.Now;
+            return Ok();
         }
     }
 }
