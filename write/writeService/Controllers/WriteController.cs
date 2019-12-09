@@ -25,7 +25,7 @@ namespace writeService.Controllers
             Console.WriteLine(parameter.name);
             Console.WriteLine(Request.Headers["Accept"] + "  " + Request.Headers["Content-Type"]);
             var cluster = Cluster.Builder()
-                .AddContactPoints("172.17.0.4")
+                .AddContactPoints("172.27.0.2", "172.27.0.3")
                 .Build();
             var session = cluster.Connect("my_keyspace");
             Guid guid = Guid.NewGuid();

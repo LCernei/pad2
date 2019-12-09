@@ -1,0 +1,63 @@
+version: '3'
+
+# 2 node cluster
+# If you see exit code 137 (OOM killer) then ensure Docker has access to more resources
+services:
+  cassandra-seed:
+    volumes:
+      - "cassandra_data_seed:/var/lib/cassandra"
+    container_name: cassandra-seed-node
+    image: cassandra:3.11
+    ports:
+      - "9042:9042"   # Native transport
+      - "7199:7199"   # JMX
+      - "9160:9160"   # Thrift clients
+    networks:
+      default:
+        ipv4_address: 172.27.0.2
+
+  cassandra-node-1:
+    image: cassandra:3.11
+    volumes:
+      - "cassandra_data_1:/var/lib/cassandra"
+    command: /bin/bash -c "echo 'Waiting for seed node' && sleep 30 && /docker-entrypoint.sh cassandra -f"
+    environment:
+      - "CASSANDRA_SEEDS=cassandra-seed-node"
+    networks:
+      default:
+        ipv4_address: 172.27.0.3
+    depends_on:
+      - "cassandra-seed"
+
+  read-service:
+    build:
+      context: ./read/readService
+    image: read-image
+    ports:
+      - "3000:80"
+    networks:
+      default:
+        ipv4_address: 172.27.0.4
+    depends_on:
+      - "cassandra-seed"
+
+  write-service:
+    build:
+      context: ./write/writeService
+    image: write-image
+    ports:
+      - "4000:80"
+    networks:
+      default:
+        ipv4_address: 172.27.0.5
+    depends_on:
+      - "cassandra-seed"
+
+volumes:
+  cassandra_data_seed:
+  cassandra_data_1:
+
+networks:
+  default:
+    external:
+      name: pad_network

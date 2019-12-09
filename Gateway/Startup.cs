@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace webapi
+namespace Gateway
 {
     public class Startup
     {
@@ -43,7 +43,7 @@ namespace webapi
                 app.UseDeveloperExceptionPage();
             }
 
-//            app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 

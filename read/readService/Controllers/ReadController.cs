@@ -23,7 +23,7 @@ namespace readService.Controllers
         public IActionResult GetAll()
         {
             var cluster = Cluster.Builder()
-                .AddContactPoints("172.17.0.4")
+                .AddContactPoints("172.27.0.2", "172.27.0.3")
                 .Build();
             var session = cluster.Connect("my_keyspace");
             var rs = session.Execute("SELECT * FROM Movies");

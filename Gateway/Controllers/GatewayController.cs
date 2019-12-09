@@ -9,10 +9,11 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Gateway.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace webapi.Controllers
+namespace Gateway.Controllers
 {
     [ApiController]
     [Route("[controller]")]

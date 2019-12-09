@@ -1,4 +1,4 @@
-namespace webapi
+namespace Gateway.Models
 {
     public class Movie
     {
