@@ -1,4 +1,4 @@
-namespace Gateway.Models
+namespace WriteService.Models
 {
     public class Movie
     {

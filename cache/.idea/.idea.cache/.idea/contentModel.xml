@@ -2,14 +2,13 @@
 <project version="4">
   <component name="ContentModelStore">
     <e p="$USER_HOME$/.Rider2019.2/system/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.Rider2019.2/system/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_read.-1107928383.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.Rider2019.2/system/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_cache.-940397241.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
-      <e p="ReadService" t="IncludeRecursive">
-        <e p=".dockerignore" t="Include" />
+      <e p="Cache" t="IncludeRecursive">
+        <e p="Cache.csproj" t="IncludeRecursive" />
         <e p="Controllers" t="Include">
-          <e p="ReadController.cs" t="Include" />
+          <e p="CacheController.cs" t="Include" />
         </e>
-        <e p="Dockerfile" t="Include" />
         <e p="Models" t="Include">
           <e p="Movie.cs" t="Include" />
         </e>
@@ -17,7 +16,6 @@
         <e p="Properties" t="Include">
           <e p="launchSettings.json" t="Include" />
         </e>
-        <e p="ReadService.csproj" t="IncludeRecursive" />
         <e p="Startup.cs" t="Include" />
         <e p="appsettings.Development.json" t="Include" />
         <e p="appsettings.json" t="Include" />
@@ -25,13 +23,13 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
-              <e p="ReadService.AssemblyInfo.cs" t="Include" />
+              <e p="Cache.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
       </e>
+      <e p="cache.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
-      <e p="read.sln" t="IncludeFlat" />
     </e>
   </component>
 </project>

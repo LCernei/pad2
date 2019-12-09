@@ -1,5 +1,5 @@
 version: '3'
-
+# docker network create --subnet 172.27.0.3/16 pad_network
 # 2 node cluster
 # If you see exit code 137 (OOM killer) then ensure Docker has access to more resources
 services:
@@ -31,7 +31,7 @@ services:
 
   read-service:
     build:
-      context: ./read/readService
+      context: ./read/ReadService
     image: read-image
     ports:
       - "3000:80"
@@ -41,15 +41,27 @@ services:
     depends_on:
       - "cassandra-seed"
 
+  read-service-1:
+    build:
+      context: ./read/ReadService
+    image: read-image
+    ports:
+      - "3001:80"
+    networks:
+      default:
+        ipv4_address: 172.27.0.5
+    depends_on:
+      - "cassandra-seed"
+
   write-service:
     build:
-      context: ./write/writeService
+      context: ./write/WriteService
     image: write-image
     ports:
       - "4000:80"
     networks:
       default:
-        ipv4_address: 172.27.0.5
+        ipv4_address: 172.27.0.6
     depends_on:
       - "cassandra-seed"
 

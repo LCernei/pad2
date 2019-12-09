@@ -1,31 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using Gateway.Models;
+using Cache.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Gateway.Controllers
+namespace Cache.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class GatewayController : ControllerBase
+    public class CacheController : ControllerBase
     {
-        private readonly ILogger<GatewayController> _logger;
+        private readonly ILogger<CacheController> _logger;
         private readonly IHttpClientFactory _clientFactory;
-        private readonly List<string> readIpList = new List<string>{"localhost:3000", "localhost:3001"};
-        private static int currentIndex = 0;
-        public GatewayController(ILogger<GatewayController> logger, IHttpClientFactory clientFactory)
+        
+        public CacheController(ILogger<CacheController> logger, IHttpClientFactory clientFactory)
         {
             _logger = logger;
-            _clientFactory = clientFactory;
+           _clientFactory = clientFactory;
         }
 
         [HttpGet]
@@ -33,15 +30,6 @@ namespace Gateway.Controllers
         public async Task<IActionResult> GetAll()
         {
             var accept = Request.Headers["Accept"].ToString();
-            
-            var currentIp = readIpList[currentIndex];
-            currentIndex++;
-            if (currentIndex >= readIpList.Count)
-            {
-                currentIndex = 0;
-            }                                        // load ballancing
-
-            Console.WriteLine(currentIp + " " + currentIndex);
             
             var request = new HttpRequestMessage(HttpMethod.Get,
                 $"http://{currentIp}/read");

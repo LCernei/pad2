@@ -1,4 +1,4 @@
-namespace Gateway.Models
+namespace Cache.Models
 {
     public class Movie
     {

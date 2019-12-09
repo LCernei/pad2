@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Cassandra;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using WriteService.Models;
 
-namespace writeService.Controllers
+namespace WriteService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -22,7 +23,7 @@ namespace writeService.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Movie parameter)
         {
-            Console.WriteLine(parameter.name);
+            Console.WriteLine(parameter.Name);
             Console.WriteLine(Request.Headers["Accept"] + "  " + Request.Headers["Content-Type"]);
             var cluster = Cluster.Builder()
                 .AddContactPoints("172.27.0.2", "172.27.0.3")
@@ -33,7 +34,7 @@ namespace writeService.Controllers
             //Prepare a statement once
             var ps = session.Prepare("INSERT INTO Movies(id, name) values(?, ?)");
             //...bind different parameters every time you need to execute
-            var statement = ps.Bind(guid.ToString(), parameter.name);
+            var statement = ps.Bind(guid.ToString(), parameter.Name);
             //Execute the bound statement with the provided parameters
             session.Execute(statement);
 
